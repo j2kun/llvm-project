@@ -24,6 +24,7 @@
 #include "mlir/IR/Operation.h"
 #include "llvm/Support/PointerLikeTypeTraits.h"
 
+#include <iostream>
 #include <optional>
 #include <type_traits>
 
@@ -1735,6 +1736,7 @@ public:
       llvm::report_fatal_error(
           "Attempting to attach an interface to an unregistered operation " +
           ConcreteType::getOperationName() + ".");
+    std::cerr << "attachInterface: " << info->getStringRef().str() << "\n";
     (checkInterfaceTarget<Models>(), ...);
     info->attachInterface<Models...>();
   }

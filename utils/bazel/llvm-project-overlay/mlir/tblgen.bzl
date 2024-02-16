@@ -373,6 +373,7 @@ def gentbl_filegroup(
             )
 
     included_srcs = [f for (opts, f) in tbl_outs if not any([skip_opt in opts for skip_opt in skip_opts])]
+    print("making filegroup with name, included_srcs: ", name, included_srcs)
     native.filegroup(
         name = name,
         srcs = included_srcs,
