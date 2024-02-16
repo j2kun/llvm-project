@@ -13,6 +13,8 @@
 #ifndef MLIR_IR_STORAGEUNIQUERSUPPORT_H
 #define MLIR_IR_STORAGEUNIQUERSUPPORT_H
 
+#include <iostream>
+
 #include "mlir/IR/AttrTypeSubElements.h"
 #include "mlir/IR/DialectRegistry.h"
 #include "mlir/Support/InterfaceSupport.h"
@@ -154,12 +156,14 @@ public:
   /// call will abort otherwise.
   template <typename... IfaceModels>
   static void attachInterface(MLIRContext &context) {
+    std::cerr << "attachInterface\n";
     typename ConcreteT::AbstractTy *abstract =
         ConcreteT::AbstractTy::lookupMutable(TypeID::get<ConcreteT>(),
                                              &context);
-    if (!abstract)
-      llvm::report_fatal_error("Registering an interface for an attribute/type "
+    if (!abstract) {
+      llvm::report_fatal_error("HERE! Registering an interface for an attribute/type "
                                "that is not itself registered.");
+    }
 
     // Handle the case where the models resolve a promised interface.
     (dialect_extension_detail::handleAdditionOfUndefinedPromisedInterface(

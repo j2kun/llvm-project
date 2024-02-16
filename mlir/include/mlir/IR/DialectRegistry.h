@@ -18,6 +18,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 
+#include <iostream>
 #include <map>
 #include <tuple>
 
@@ -242,6 +243,9 @@ public:
       ~Extension() override = default;
 
       void apply(MLIRContext *context, DialectsT *...dialects) const final {
+        for (auto *dialect : {dialects...})
+          std::cerr << "Applying extension to dialect: "
+                    << dialect->getNamespace().str() << "\n";
         extensionFn(context, dialects...);
       }
       ExtensionFnT extensionFn;

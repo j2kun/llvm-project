@@ -6,7 +6,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include "mlir/IR/MLIRContext.h"
+#include <iostream>
+
 #include "AffineExprDetail.h"
 #include "AffineMapDetail.h"
 #include "AttributeDetail.h"
@@ -23,6 +24,7 @@
 #include "mlir/IR/ExtensibleDialect.h"
 #include "mlir/IR/IntegerSet.h"
 #include "mlir/IR/Location.h"
+#include "mlir/IR/MLIRContext.h"
 #include "mlir/IR/OpImplementation.h"
 #include "mlir/IR/OperationSupport.h"
 #include "mlir/IR/Types.h"
@@ -749,6 +751,11 @@ const AbstractAttribute &AbstractAttribute::lookup(TypeID typeID,
 AbstractAttribute *AbstractAttribute::lookupMutable(TypeID typeID,
                                                     MLIRContext *context) {
   auto &impl = context->getImpl();
+  llvm::errs() << "REGISTERED Attributes:\n";
+  for (auto &attr : impl.registeredAttributes) {
+    llvm::errs() << attr.second->getDialect().getNamespace() << "."
+                 << attr.second->getName() << "\n";
+  }
   return impl.registeredAttributes.lookup(typeID);
 }
 
@@ -973,6 +980,12 @@ const AbstractType &AbstractType::lookup(TypeID typeID, MLIRContext *context) {
 
 AbstractType *AbstractType::lookupMutable(TypeID typeID, MLIRContext *context) {
   auto &impl = context->getImpl();
+  // Print out all register dialect names
+  llvm::errs() << "REGISTERED Types:\n";
+  for (auto &ty : impl.registeredTypes) {
+    llvm::errs() << ty.second->getDialect().getNamespace() << "."
+                 << ty.second->getName() << "\n";
+  }
   return impl.registeredTypes.lookup(typeID);
 }
 
