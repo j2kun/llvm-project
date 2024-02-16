@@ -83,85 +83,101 @@ pybind_extension(
     srcs = ["//mlir:lib/Bindings/Python/RegisterEverything.cpp"],
     deps = [
         "//mlir:CAPIConversion",
-        "//mlir:CAPITransforms",
         "//mlir:CAPIRegisterEverything",
+        "//mlir:CAPITransforms",
         "//mlir:MLIRBindingsPythonHeadersAndDeps",
     ],
 )
 
-##---------------------------------------------------------------------------##
-# Core IR modules.
-##---------------------------------------------------------------------------##
+py_library(
+    name = "mlir",
+    srcs = glob(["mlir/*.py"]),
+)
 
-filegroup(
-    name = "DialectCorePyFiles",
-    srcs = [
-        "mlir/dialects/_ods_common.py",
+py_library(
+    name = "dialects",
+    srcs = glob(["mlir/dialects/**/*.py"]),
+)
+
+py_library(
+    name = "extras",
+    srcs = glob(["mlir/extras/**/*.py"]),
+)
+
+py_library(
+    name = "runtime",
+    srcs = glob(["mlir/runtime/**/*.py"]),
+)
+
+py_library(
+    name = "_mlir_libs",
+    srcs = glob(["mlir/_mlir_libs/**/*.py"]),
+    data = glob(["mlir/_mlir_libs/**/*.pyi"]),
+)
+
+py_library(
+    name = "PythonBindings",
+    data = [
+        "mlir/_mlir_libs/_mlir.so",
+        "mlir/_mlir_libs/_mlirDialectsLinalg.so",
+        "mlir/_mlir_libs/_mlirDialectsQuant.so",
+        "mlir/_mlir_libs/_mlirDialectsSparseTensor.so",
+        "mlir/_mlir_libs/_mlirExecutionEngine.so",
+        "mlir/_mlir_libs/_mlirLinalgPasses.so",
+        "mlir/_mlir_libs/_mlirRegisterEverything.so",
+        # these need to be data because gentbl_filegroup doesn't create a py_library
+        ":AMDGPUOpsPyGen",
+        ":AffineOpsPyGen",
+        ":ArithOpsPyGen",
+        ":BufferizationEnumPyGen",
+        ":BufferizationOpsPyGen",
+        ":BufferizationTransformOpsPyGen",
+        ":BuiltinOpsPyGen",
+        ":ComplexOpsPyGen",
+        ":ControlFlowOpsPyGen",
+        ":FuncPyGen",
+        ":GPUOpsPyGen",
+        ":GPUTransformOpsPyGen",
+        ":LLVMOpsPyGen",
+        ":LinalgOpsPyGen",
+        ":LoopTransformOpsPyGen",
+        ":MLProgramOpsPyGen",
+        ":MathOpsPyGen",
+        ":MemRefOpsPyGen",
+        ":MemRefTransformOpsPyGen",
+        ":NVGPUOpsPyGen",
+        ":NVGPUTransformOpsPyGen",
+        ":NVVMOpsPyGen",
+        ":OpenMPOpsPyGen",
+        ":PDLPyGen",
+        ":PDLTransformOpsPyGen",
+        ":PythonTestPyGen",
+        ":ROCDLOpsPyGen",
+        ":SCFPyGen",
+        ":SPIRVOpsPyGen",
+        ":ShapeOpsPyGen",
+        ":SparseTensorEnumPyGen",
+        ":SparseTensorOpsPyGen",
+        ":SparseTensorTransformOpsPyGen",
+        ":StructureTransformEnumPyGen",
+        ":StructuredTransformOpsPyGen",
+        ":TensorOpsPyGen",
+        ":TensorTransformOpsPyGen",
+        ":TosaOpsPyGen",
+        ":TransformEnumPyGen",
+        ":TransformOpsPyGen",
+        ":VectorAttributesPyGen",
+        ":VectorOpsPyGen",
+        ":VectorTransformEnumPyGen",
+        ":VectorTransformOpsPyGen",
     ],
-)
-
-filegroup(
-    name = "ExecutionEnginePyFiles",
-    srcs = [
-        "mlir/execution_engine.py",
+    deps = [
+        ":_mlir_libs",
+        ":dialects",
+        ":extras",
+        ":mlir",
+        ":runtime",
     ],
-)
-
-filegroup(
-    name = "ExecutionEnginePyIFiles",
-    srcs = [
-        "mlir/_mlir_libs/_mlirExecutionEngine.pyi",
-    ],
-)
-
-filegroup(
-    name = "IRPyFiles",
-    srcs = [
-        "mlir/ir.py",
-    ],
-)
-
-filegroup(
-    name = "ExtrasPyFiles",
-    srcs = glob([
-        "mlir/extras/*.py",
-    ]),
-)
-
-filegroup(
-    name = "IRPyIFiles",
-    srcs = [
-        "mlir/_mlir_libs/_mlir/__init__.pyi",
-        "mlir/_mlir_libs/_mlir/ir.pyi",
-    ],
-)
-
-filegroup(
-    name = "MlirLibsPyFiles",
-    srcs = [
-        "mlir/_mlir_libs/__init__.py",
-    ],
-)
-
-filegroup(
-    name = "PassManagerPyFiles",
-    srcs = [
-        "mlir/passmanager.py",
-    ],
-)
-
-filegroup(
-    name = "PassManagerPyIFiles",
-    srcs = [
-        "mlir/_mlir_libs/_mlir/passmanager.pyi",
-    ],
-)
-
-filegroup(
-    name = "RuntimePyFiles",
-    srcs = glob([
-        "mlir/runtime/*.py",
-    ]),
 )
 
 ##---------------------------------------------------------------------------##
