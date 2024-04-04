@@ -3067,4 +3067,16 @@ def TestOpOptionallyImplementingInterface
   let arguments = (ins BoolAttr:$implementsInterface);
 }
 
+def TestOpDialectConversionBug1 : TEST_Op<"dialect_conversion_bug_1",
+    [SameOperandsAndResultType]> {
+  let arguments = (ins AnyInteger:$lhs, AnyInteger:$rhs);
+  let results = (outs AnyInteger:$output);
+}
+
+def TestOpDialectConversionBug2 : TEST_Op<"dialect_conversion_bug_2",
+    [SameOperandsAndResultType]> {
+  let arguments = (ins AnyInteger:$lhs, AnyInteger:$rhs);
+  let results = (outs AnyInteger:$output);
+}
+
 #endif // TEST_OPS
