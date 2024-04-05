@@ -6,8 +6,9 @@
 // CHECK-LABEL: @test1
 // CHECK-SAME: %[[ARG0:.*]]: i32, %[[ARG1:.*]]: i32
 func.func @test1(%arg0: i32, %arg1 : i32) -> i32 {
-  // CHECK: dialect_conversion_bug_2
-  %0 = "test.dialect_conversion_bug_1"(%arg0, %arg1) : (i32, i32) -> (i32)
-  %1 = "test.dialect_conversion_bug_1"(%0, %arg1) : (i32, i32) -> (i32)
-  func.return %1 : i32
+  %0 = "test.bgv_mul"(%arg0, %arg1) : (i32, i32) -> (i64)
+  %1 = "test.bgv_relin"(%0) : (i64) -> (i32)
+  %2 = "test.bgv_sub"(%1, %arg0) : (i32, i32) -> (i32)
+  %3 = "test.bgv_sub"(%2, %arg1) : (i32, i32) -> (i32)
+  func.return %3 : i32
 }
