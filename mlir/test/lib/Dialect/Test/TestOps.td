@@ -3067,4 +3067,34 @@ def TestOpOptionallyImplementingInterface
   let arguments = (ins BoolAttr:$implementsInterface);
 }
 
+def TestOpBgvMul : TEST_Op<"bgv_mul", [Pure, Commutative]> {
+  let arguments = (ins I32:$lhs, I32:$rhs);
+  let results = (outs I64:$output);
+}
+
+def TestOpBgvRelin : TEST_Op<"bgv_relin", [Pure]> {
+  let arguments = (ins I64:$input);
+  let results = (outs I32:$output);
+}
+
+def TestOpBgvSub : TEST_Op<"bgv_sub", [Pure, SameOperandsAndResultType]> {
+  let arguments = (ins I32:$lhs, I32:$rhs);
+  let results = (outs I32:$output);
+}
+
+def TestOpOpenfheMul : TEST_Op<"openfhe_mul", [Pure, Commutative]> {
+  let arguments = (ins I8:$ctx, I32:$lhs, I32:$rhs);
+  let results = (outs I64:$output);
+}
+
+def TestOpOpenfheRelin : TEST_Op<"openfhe_relin", [Pure]> {
+  let arguments = (ins I8:$ctx, I64:$input);
+  let results = (outs I32:$output);
+}
+
+def TestOpOpenfheSub : TEST_Op<"openfhe_sub", [Pure]> {
+  let arguments = (ins I8:$ctx, I32:$lhs, I32:$rhs);
+  let results = (outs I32:$output);
+}
+
 #endif // TEST_OPS

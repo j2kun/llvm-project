@@ -1887,6 +1887,52 @@ struct TestSelectiveReplacementPatternDriver
 };
 } // namespace
 
+namespace {
+struct DialectConversionBugPattern
+    : public OpConversionPattern<TestOpDialectConversionBug1> {
+  using OpConversionPattern<TestOpDialectConversionBug1>::OpConversionPattern;
+
+  LogicalResult
+  matchAndRewrite(TestOpDialectConversionBug1 op, OpAdaptor adaptor,
+                  ConversionPatternRewriter &rewriter) const final {
+    // Just swap order of operands, no type changes
+    rewriter.replaceOpWithNewOp<TestOpDialectConversionBug2>(
+        op, adaptor.getRhs(), adaptor.getLhs());
+    return success();
+  }
+};
+
+struct TestDialectConversionWithoutResultTypeChanges
+    : public PassWrapper<TestDialectConversionWithoutResultTypeChanges,
+                         OperationPass<>> {
+  MLIR_DEFINE_EXPLICIT_INTERNAL_INLINE_TYPE_ID(
+      TestDialectConversionWithoutResultTypeChanges)
+
+  StringRef getArgument() const final {
+    return "test-dialect-conversion-without-type-changes";
+  }
+  StringRef getDescription() const final {
+    return "Test a bug in DialectConversion when op results don't change types";
+  }
+
+  void runOnOperation() override {
+    TypeConverter converter;
+    converter.addConversion([](Type t) { return t; });
+
+    ConversionTarget target(getContext());
+    target.addIllegalOp<TestOpDialectConversionBug1>();
+    target.addLegalOp<TestOpDialectConversionBug2>();
+
+    RewritePatternSet patterns(&getContext());
+    patterns.add<DialectConversionBugPattern>(converter, &getContext());
+
+    if (failed(applyPartialConversion(getOperation(), target,
+                                      std::move(patterns))))
+      signalPassFailure();
+  }
+};
+} // namespace
+
 //===----------------------------------------------------------------------===//
 // PassRegistration
 //===----------------------------------------------------------------------===//
@@ -1911,6 +1957,7 @@ void registerPatternsTestPass() {
 
   PassRegistration<TestTypeConversionDriver>();
   PassRegistration<TestTargetMaterializationWithNoUses>();
+  PassRegistration<TestDialectConversionWithoutResultTypeChanges>();
 
   PassRegistration<TestRewriteDynamicOpDriver>();
 
