@@ -804,11 +804,6 @@ struct ConvertFuncToLLVMPass
     RewritePatternSet patterns(&getContext());
     populateFuncToLLVMConversionPatterns(typeConverter, patterns, symbolTable);
 
-    // TODO(https://github.com/llvm/llvm-project/issues/70982): Remove these in
-    // favor of their dedicated conversion passes.
-    arith::populateArithToLLVMConversionPatterns(typeConverter, patterns);
-    cf::populateControlFlowToLLVMConversionPatterns(typeConverter, patterns);
-
     LLVMConversionTarget target(getContext());
     if (failed(applyPartialConversion(m, target, std::move(patterns))))
       signalPassFailure();
