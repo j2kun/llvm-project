@@ -2,6 +2,8 @@
 // RUN:     -expand-strided-metadata \
 // RUN:     -finalize-memref-to-llvm \
 // RUN:     -test-cf-assert \
+// RUN:     -convert-arith-to-llvm \
+// RUN:     -convert-cf-to-llvm \
 // RUN:     -convert-func-to-llvm \
 // RUN:     -reconcile-unrealized-casts | \
 // RUN: mlir-cpu-runner -e main -entry-point-result=void \

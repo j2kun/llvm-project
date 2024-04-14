@@ -21,7 +21,7 @@
 // RUN:         -convert-scf-to-cf  \
 // RUN:         -convert-vector-to-llvm \
 // RUN:         -convert-index-to-llvm=index-bitwidth=32 \
-// RUN:         -convert-arith-to-llvm \
+// RUN:         -convert-arith-to-llvm -convert-cf-to-llvm \
 // RUN:         -finalize-memref-to-llvm \
 // RUN:         -convert-func-to-llvm \
 // RUN:         -expand-strided-metadata --nvvm-attach-target="module=main_kernel features=+ptx80 chip=sm_90 O=3" \

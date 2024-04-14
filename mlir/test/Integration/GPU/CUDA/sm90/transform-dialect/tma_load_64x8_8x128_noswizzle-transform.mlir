@@ -10,6 +10,8 @@
 // RUN:     -convert-index-to-llvm=index-bitwidth=32 \
 // RUN:     -convert-arith-to-llvm \
 // RUN:     -finalize-memref-to-llvm \
+// RUN:     -convert-arith-to-llvm \
+// RUN:     -convert-cf-to-llvm \
 // RUN:     -convert-func-to-llvm \
 // RUN:     -canonicalize \
 // RUN:     -expand-strided-metadata --nvvm-attach-target="module=main_kernel features=+ptx80 chip=sm_90 O=3" \
