@@ -1,7 +1,7 @@
 // RUN: mlir-opt %s \
 // RUN:   -func-bufferize -arith-bufferize --canonicalize \
 // RUN:   -convert-vector-to-scf -convert-scf-to-cf -convert-vector-to-llvm -finalize-memref-to-llvm\
-// RUN:   -convert-func-to-llvm -reconcile-unrealized-casts |\
+// RUN:   -convert-arith-to-llvm -convert-cf-to-llvm -convert-func-to-llvm -reconcile-unrealized-casts |\
 // RUN: mlir-cpu-runner \
 // RUN:  -e entry -entry-point-result=void \
 // RUN:  -shared-libs=%mlir_c_runner_utils,%mlir_runner_utils |\

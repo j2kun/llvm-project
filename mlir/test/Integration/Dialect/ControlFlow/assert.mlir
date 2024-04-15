@@ -1,5 +1,5 @@
 // RUN: mlir-opt %s -test-cf-assert \
-// RUN:     -convert-func-to-llvm | \
+// RUN:     -convert-cf-to-llvm -convert-arith-to-llvm -convert-func-to-llvm | \
 // RUN: mlir-cpu-runner -e main -entry-point-result=void | \
 // RUN: FileCheck %s
 

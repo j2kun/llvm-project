@@ -1,7 +1,7 @@
 // RUN: mlir-opt %s -generate-runtime-verification \
 // RUN:     -lower-affine \
 // RUN:     -finalize-memref-to-llvm \
-// RUN:     -test-cf-assert \
+// RUN:     -test-cf-assert -convert-cf-to-llvm -convert-arith-to-llvm \
 // RUN:     -convert-func-to-llvm \
 // RUN:     -reconcile-unrealized-casts | \
 // RUN: mlir-cpu-runner -e main -entry-point-result=void \
