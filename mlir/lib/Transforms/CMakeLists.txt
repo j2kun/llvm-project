@@ -20,6 +20,7 @@ add_mlir_library(MLIRTransforms
   SymbolPrivatize.cpp
   TopologicalSort.cpp
   ViewOpGraph.cpp
+  PolynomialMystery.cpp
 
   ADDITIONAL_HEADER_DIRS
   ${MLIR_MAIN_INCLUDE_DIR}/mlir/Transforms
@@ -34,6 +35,7 @@ add_mlir_library(MLIRTransforms
   MLIRLoopLikeInterface
   MLIRMemorySlotInterfaces
   MLIRPass
+  MLIRPolynomialDialect
   MLIRRuntimeVerifiableOpInterface
   MLIRSideEffectInterfaces
   MLIRSupport

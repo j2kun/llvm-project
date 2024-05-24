@@ -569,4 +569,11 @@ def CompositeFixedPointPass : Pass<"composite-fixed-point-pass"> {
   ];
 }
 
+def PolynomialMystery : Pass<"polynomial-mystery"> {
+  let summary = "What is even going on";
+  let description = [{
+    Find the bug!
+  }];
+}
+
 #endif // MLIR_TRANSFORMS_PASSES
