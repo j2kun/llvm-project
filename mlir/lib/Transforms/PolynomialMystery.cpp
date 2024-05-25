@@ -36,12 +36,11 @@ struct PolynomialMystery
     // pass
     std::cerr << "Before conversion\n";
     getOperation()->walk([&](ConstantOp op) {
-      for (const auto &term : cast<TypedIntPolynomialAttr>(op.getValue())
-                                  .getValue()
-                                  .getPolynomial()
-                                  .getTerms()) {
-        std::cerr << "coeff: " << term.getCoefficient().getSExtValue()
-                  << "; exp: " << term.getExponent().getSExtValue() << "\n";
+      if (auto attr = dyn_cast<TypedIntPolynomialAttr>(op.getValue())) {
+        for (const IntMonomial& term : attr.getValue().getPolynomial().getTerms()) {
+          term.getCoefficient().dump();
+          term.getExponent().dump();
+        }
       }
     });
   }

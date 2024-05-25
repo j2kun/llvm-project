@@ -158,11 +158,10 @@ Attribute IntPolynomialAttr::parse(AsmParser &parser, Type type) {
   if (failed(parsePolynomialAttr<IntMonomial>(
           parser, monomials, variables,
           [&](IntMonomial &monomial) -> OptionalParseResult {
-            APInt parsedCoeff(apintBitWidth, 1);
-            OptionalParseResult result =
-                parser.parseOptionalInteger(parsedCoeff);
-            monomial.setCoefficient(parsedCoeff);
-            return result;
+            int64_t parsedCoeff = 1;
+            ParseResult result = parser.parseInteger(parsedCoeff);
+            monomial.setCoefficient(APInt(apintBitWidth, parsedCoeff));
+            return OptionalParseResult(result);
           }))) {
     return {};
   }
