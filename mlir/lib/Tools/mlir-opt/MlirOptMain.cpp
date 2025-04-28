@@ -211,6 +211,14 @@ struct MlirOptMainConfigCLOptions : public MlirOptMainConfig {
             cl::location(generateReproducerFileFlag), cl::init(""),
             cl::value_desc("filename"));
 
+    static cl::opt<std::string, /*ExternalStorage=*/true> generateCatalogFile(
+        "mlir-catalog-file",
+        llvm::cl::desc(
+            "Generate an mlir catalog file at the provided filename, "
+            "requires MLIR_ENABLE_CATALOG_GENERATOR"),
+        cl::location(generateCatalogFileFlag),
+        cl::init("/tmp/_mlir_catalog.txt"), cl::value_desc("filename"));
+
     /// Set the callback to load a pass plugin.
     passPlugins.setCallback([&](const std::string &pluginPath) {
       auto plugin = PassPlugin::load(pluginPath);
