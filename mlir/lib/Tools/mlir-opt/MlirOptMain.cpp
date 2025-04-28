@@ -527,6 +527,7 @@ static LogicalResult processBuffer(raw_ostream &os,
   // Create a context just for the current buffer. Disable threading on creation
   // since we'll inject the thread-pool separately.
   MLIRContext context(registry, MLIRContext::Threading::DISABLED);
+
   if (threadPool)
     context.setThreadPool(*threadPool);
 
