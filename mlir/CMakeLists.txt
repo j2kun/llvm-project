@@ -315,3 +315,8 @@ endif()
 if(MLIR_STANDALONE_BUILD)
   llvm_distribution_add_targets()
 endif()
+
+if (MLIR_ENABLE_CATALOG_GENERATOR)
+  add_definitions(-DMLIR_ENABLE_CATALOG_GENERATOR)
+endif()
+
