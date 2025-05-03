@@ -762,6 +762,16 @@ public:
   virtual bool canRecoverFromRewriteFailure() const { return false; }
 };
 
+class CatalogingPatternRewriter : public PatternRewriter {
+public:
+  explicit CatalogingPatternRewriter(const PatternRewriter &rewriter)
+      : PatternRewriter(rewriter.getContext()), nestedRewriter(rewriter) {}
+
+private:
+  const PatternRewriter &nestedRewriter;
+  DenseMap<OperationName, SmallVector<OperationName>> recordedRewrites;
+};
+
 } // namespace mlir
 
 // Optionally expose PDL pattern matching methods.

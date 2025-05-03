@@ -299,6 +299,9 @@ protected:
 
   /// The reproducer output filename (no crash required).
   std::string generateReproducerFileFlag = "";
+
+  /// The catalog filename produced
+  std::string generateCatalogFileFlag = "";
 };
 
 /// This defines the function type used to setup the pass manager. This can be

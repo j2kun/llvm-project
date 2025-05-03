@@ -194,6 +194,10 @@ LogicalResult PatternApplicator::matchAndRewrite(
     bool matched = false;
     op->getContext()->executeAction<ApplyPatternAction>(
         [&]() {
+          // FIXME: create a new rewriter subclass that adds a logger
+          // to all the pattern hooks and then forwards to the superclass.
+          // then after the action is executed, if it's a success() then
+          // dump the results to the catalog file.
           rewriter.setInsertionPoint(op);
 #ifndef NDEBUG
           // Operation `op` may be invalidated after applying the rewrite
@@ -209,7 +213,13 @@ LogicalResult PatternApplicator::matchAndRewrite(
 
             const auto *pattern =
                 static_cast<const RewritePattern *>(bestPattern);
+
+          #ifdef MLIR_ENABLE_CATALOG_GENERATOR
+            CatalogingPatternRewriter catalogingRewriter(rewriter);
+            result = pattern->matchAndRewrite(op, catalogingRewriter);
+          #else
             result = pattern->matchAndRewrite(op, rewriter);
+          #endif
 
             LLVM_DEBUG(llvm::dbgs()
                        << "\"" << bestPattern->getDebugName() << "\" result "
