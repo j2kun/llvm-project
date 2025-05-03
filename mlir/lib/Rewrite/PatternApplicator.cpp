@@ -213,7 +213,13 @@ LogicalResult PatternApplicator::matchAndRewrite(
 
             const auto *pattern =
                 static_cast<const RewritePattern *>(bestPattern);
+
+          #ifdef MLIR_ENABLE_CATALOG_GENERATOR
+            CatalogingPatternRewriter catalogingRewriter(rewriter);
+            result = pattern->matchAndRewrite(op, catalogingRewriter);
+          #else
             result = pattern->matchAndRewrite(op, rewriter);
+          #endif
 
             LLVM_DEBUG(llvm::dbgs()
                        << "\"" << bestPattern->getDebugName() << "\" result "
