@@ -27,6 +27,7 @@ llvm_add_library(MLIRTableGen STATIC
   Operator.cpp
   Pass.cpp
   Pattern.cpp
+  Pipeline.cpp
   Predicate.cpp
   Property.cpp
   Region.cpp
