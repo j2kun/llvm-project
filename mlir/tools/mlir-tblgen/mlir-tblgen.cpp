@@ -12,6 +12,7 @@
 
 #include "mlir/TableGen/GenInfo.h"
 #include "mlir/Tools/mlir-tblgen/MlirTblgenMain.h"
+#include "PipelineGen.h"
 #include "llvm/TableGen/Record.h"
 
 using namespace llvm;
