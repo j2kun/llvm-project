@@ -267,6 +267,34 @@ OpFoldResult math::SinOp::fold(FoldAdaptor adaptor) {
 }
 
 //===----------------------------------------------------------------------===//
+// SignIOp folder
+//===----------------------------------------------------------------------===//
+
+OpFoldResult math::SignIOp::fold(FoldAdaptor adaptor) {
+  return constFoldUnaryOp<IntegerAttr>(
+      adaptor.getOperands(), [](const APInt &a) {
+        return a.isNegative() ? APInt(a.getBitWidth(), -1)
+                              : (a.isZero() ? APInt(a.getBitWidth(), 0)
+                                            : APInt(a.getBitWidth(), 1));
+      });
+}
+
+//===----------------------------------------------------------------------===//
+// SignFOp folder
+//===----------------------------------------------------------------------===//
+
+OpFoldResult math::SignFOp::fold(FoldAdaptor adaptor) {
+  return constFoldUnaryOp<FloatAttr>(
+      adaptor.getOperands(), [](const APFloat &a) {
+        if (a.isNaN())
+          return APFloat::getNaN(a.getSemantics());
+        return a.isNegative() ? APFloat(a.getSemantics(), -1)
+                              : (a.isZero() ? APFloat(a.getSemantics(), 0)
+                                            : APFloat(a.getSemantics(), 1));
+      });
+}
+
+//===----------------------------------------------------------------------===//
 // SinhOp folder
 //===----------------------------------------------------------------------===//
 
