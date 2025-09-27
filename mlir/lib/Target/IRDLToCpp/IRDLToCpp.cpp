@@ -143,7 +143,7 @@ static void fillDict(irdl::detail::dictionary &dict, const OpStrings &strings) {
   dict["OP_REGION_COUNT"] = std::to_string(regionCount);
   dict["OP_ADD_REGIONS"] =
       regionCount ? std::string(llvm::formatv(
-                        R"(for (unsigned i = 0; i != __OP_REGION_COUNT__; ++i)
+                        R"(for (unsigned i = 0; i != {0}; ++i)
   (void)odsState.addRegion();
 )",
                         regionCount))
@@ -272,6 +272,21 @@ static void generateOpBuilderDeclarations(irdl::detail::dictionary &dict,
   dict["OP_BUILD_DECLS"] = buildDecls;
 }
 
+// add traits to the dictionary, return true if any were added
+static std::vector<std::string> generateTraits(irdl::detail::dictionary &dict,
+                                               irdl::OperationOp op,
+                                               const OpStrings &strings) {
+  std::vector<std::string> cppTraitNames;
+  if (!strings.opRegionNames.empty()) {
+    cppTraitNames.push_back(
+        llvm::formatv("::mlir::OpTrait::NRegions<{0}>::Impl",
+                      strings.opRegionNames.size())
+            .str());
+    cppTraitNames.emplace_back("::mlir::OpTrait::OpInvariants");
+  }
+  return cppTraitNames;
+}
+
 static LogicalResult generateOperationInclude(irdl::OperationOp op,
                                               raw_ostream &output,
                                               irdl::detail::dictionary &dict) {
@@ -280,6 +295,13 @@ static LogicalResult generateOperationInclude(irdl::OperationOp op,
   );
   const auto opStrings = getStrings(op);
   fillDict(dict, opStrings);
+
+  std::vector<std::string> traitNames = generateTraits(dict, op, opStrings);
+  if (traitNames.empty())
+    dict["OP_TEMPLATE_ARGS"] = opStrings.opCppName;
+  else
+    dict["OP_TEMPLATE_ARGS"] = llvm::formatv("{0}, {1}", opStrings.opCppName,
+                                             llvm::join(traitNames, ", "));
 
   generateOpGetterDeclarations(dict, opStrings);
   generateOpBuilderDeclarations(dict, opStrings);
@@ -335,26 +357,13 @@ static LogicalResult generateInclude(irdl::DialectOp dialect,
   return success();
 }
 
-// add traits to the dictionary, return true if any were added
-static std::vector<std::string> generateTraits(irdl::detail::dictionary &dict,
-                                               irdl::OperationOp op,
-                                               const OpStrings &strings) {
-  std::vector<std::string> cppTraitNames;
-  if (!strings.opRegionNames.empty()) {
-    cppTraitNames.push_back(
-        llvm::formatv("::mlir::OpTrait::NRegions<{0}>::Impl",
-                      strings.opRegionNames.size())
-            .str());
-    cppTraitNames.emplace_back("::mlir::OpTrait::OpInvariants");
-  }
-  return cppTraitNames;
-}
-
 static void generateVerifiers(irdl::detail::dictionary &dict,
                               irdl::OperationOp op, const OpStrings &strings) {
   std::vector<std::string> verifierHelpers;
   std::vector<std::string> verifierCalls;
   if (strings.opRegionNames.empty()) {
+    dict["OP_VERIFIER_HELPERS"] = "";
+    dict["OP_VERIFIER"] = "";
     // Currently IRDL regions are the only reason to generate a verifier,
     // though this will likely change as
     // https://github.com/llvm/llvm-project/issues/158040 is implemented
@@ -380,7 +389,7 @@ static void generateVerifiers(irdl::detail::dictionary &dict,
         }}
     return ::mlir::success();
         }})",
-        helperFnName, condition));
+        helperFnName, condition, textualConditionName));
 
     verifierCalls.push_back(llvm::formatv(R"(
   if (::mlir::failed({0}(*this, (*this)->getRegion({1}), {2}, {1})))
@@ -392,16 +401,16 @@ static void generateVerifiers(irdl::detail::dictionary &dict,
   // Add an overall verifier that sequences the helper calls
   std::string verifierDef =
       llvm::formatv(R"(
-::llvm::LogicalResult {0}::verifyInvariantsImpl() {
+::llvm::LogicalResult {0}::verifyInvariantsImpl() {{
     {1}
     return ::mlir::success();
-  }
+  }}
 
-::llvm::LogicalResult {0}::verifyInvariants() {
+::llvm::LogicalResult {0}::verifyInvariants() {{
   if(::mlir::succeeded(verifyInvariantsImpl()) && ::mlir::succeeded(verify()))
     return ::mlir::success();
   return ::mlir::failure();
-})",
+}})",
                     strings.opCppName, llvm::join(verifierCalls, "\n"));
 
   dict["OP_VERIFIER_HELPERS"] = llvm::join(verifierHelpers, "\n");
@@ -476,13 +485,6 @@ void {0}::build(::mlir::OpBuilder &opBuilder, ::mlir::OperationState &opState, {
           (!opStrings.opOperandNames.empty() ? "," : ""));
 
   dict["OP_BUILD_DEFS"] = buildDefinition;
-
-  std::vector<std::string> traitNames = generateTraits(dict, op, opStrings);
-  if (traitNames.empty())
-    dict["OP_TEMPLATE_ARGS"] = opStrings.opCppName;
-  else
-    dict["OP_TEMPLATE_ARGS"] = llvm::formatv("{0}, {1}", opStrings.opCppName,
-                                             llvm::join(traitNames, ", "));
 
   generateVerifiers(dict, op, opStrings);
 
