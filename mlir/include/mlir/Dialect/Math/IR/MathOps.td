@@ -469,6 +469,45 @@ def Math_CoshOp : Math_FloatUnaryOp<"cosh"> {
 }
 
 //===----------------------------------------------------------------------===//
+// SignIOp
+//===----------------------------------------------------------------------===//
+
+def Math_SignIOp : Math_IntegerUnaryOp<"signi"> {
+  let summary = "ternary-valued sign of an integer";
+  let description = [{
+    The `signi` operation computes -1 if the operand is negative, 0 if it is
+    zero, and 1 if it is positive.
+
+    Example:
+
+    ```mlir
+    %a = math.signi %b : i64
+    ```
+  }];
+  let hasFolder = 1;
+}
+
+
+//===----------------------------------------------------------------------===//
+// SignFOp
+//===----------------------------------------------------------------------===//
+
+def Math_SignFOp : Math_FloatUnaryOp<"signf"> {
+  let summary = "ternary-valued sign of a floating point value";
+  let description = [{
+    The `signf` operation computes -1.0 if the operand is negative, 0.0 if it
+    is zero, 1.0 if it is positive, and `NaN` if the operand is `NaN`.
+
+    Example:
+
+    ```mlir
+    %a = math.signf %b : f32
+    ```
+  }];
+  let hasFolder = 1;
+}
+
+//===----------------------------------------------------------------------===//
 // SinOp
 //===----------------------------------------------------------------------===//
 
